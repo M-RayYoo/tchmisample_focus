@@ -14,21 +14,22 @@
 
         // TwinCAT HMI textbox element의 구조 모양
         const textBoxHMI = document.getElementById('TcHmiTextbox_1').childNodes[0].childNodes[1].childNodes[1].childNodes[0]
-        const textHMI = document.getElementById('TcHmiTextblock_1')
-        const buttonHMI = document.getElementById('TcHmiButton_1')
-
-        buttonHMI.addEventListener('click', () => {
-            variableSomething = !variableSomething
-            textHMI.innerText = String(variableSomething)
-            if (variableSomething)
-                textBoxHMI.focus()
-            else
-                textBoxHMI.blur()
-        })
 
         textBoxHMI.addEventListener('blur', () => {
             if (variableSomething)
                 textBoxHMI.focus()
         })
+
+        const symbol = new TcHmi.Symbol('%s%ADS.PLC1.MAIN.bInitTest%/s%');
+        symbol.watch(function (data) {
+            if (data.error === TcHmi.Errors.NONE) {
+                variableSomething = data.value
+
+                if (variableSomething)
+                    textBoxHMI.focus()
+                else
+                    textBoxHMI.blur()
+            }
+        });
     });
 })(TcHmi);
